@@ -1,6 +1,7 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
+Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'spec_helper'
@@ -35,6 +36,13 @@ RSpec.configure do |config|
   # examples within a transaction, remove the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = true
+
+  config.include Request::JsonHelpers, type: :controller
+  config.include Request::HeadersHelpers, type: :controller
+
+  config.before(:each, type: :controller) do
+    include_default_accept_headers
+  end
 
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
